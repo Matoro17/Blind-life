@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3 uid="uid://dknutgulkpand"]
+
+[ext_resource type="Script" uid="uid://bkkmwy1q3cf6y" path="res://scripts/Main.gd" id="1_fos0i"]
+[ext_resource type="Script" uid="uid://bgagqqscyw4ob" path="res://scripts/Player.gd" id="1_glv2v"]
+[ext_resource type="Texture2D" uid="uid://dpdxdmhl6xq4b" path="res://icon.svg" id="2_uu6xs"]
+[ext_resource type="Script" uid="uid://bu5iedb8eofgb" path="res://scripts/camera_2d.gd" id="3_r0du0"]
+[ext_resource type="Script" uid="uid://bxk55i5qur5fq" path="res://scripts/enemy.gd" id="4_cm0pq"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_cm0pq"]
+radius = 63.0
+height = 126.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fos0i"]
+radius = 64.0
+height = 132.0
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_fos0i")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(628, 311)
+script = ExtResource("1_glv2v")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+modulate = Color(0.34902, 0.486275, 0.980392, 1)
+self_modulate = Color(0.503241, 0.360579, 0.382118, 1)
+texture = ExtResource("2_uu6xs")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CapsuleShape2D_cm0pq")
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Enemy" type="CharacterBody2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+position = Vector2(874, 316)
+script = ExtResource("4_cm0pq")
+
+[node name="Sprite2D" type="Sprite2D" parent="Enemy"]
+texture = ExtResource("2_uu6xs")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy"]
+shape = SubResource("CapsuleShape2D_fos0i")
+
+[node name="Area2D" type="Area2D" parent="Enemy"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy/Area2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(628, 311)
+position_smoothing_enabled = true
+script = ExtResource("3_r0du0")

@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://dglet4myh5r8v"]
+
+[ext_resource type="Script" uid="uid://divl88f2wq2se" path="res://scripts/StartScreen.gd" id="1_pswtb"]
+[ext_resource type="Texture2D" uid="uid://dpdxdmhl6xq4b" path="res://icon.svg" id="2_a0vbq"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_pswtb")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+position = Vector2(582.5, 399.5)
+scale = Vector2(69.4609, 35.6016)
+texture = ExtResource("2_a0vbq")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 487.0
+offset_top = 302.0
+offset_right = 671.0
+offset_bottom = 325.0
+text = "Press 'Space Bar' to talk"

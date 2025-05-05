@@ -1,0 +1,153 @@
+[gd_scene load_steps=20 format=3 uid="uid://dknutgulkpand"]
+
+[ext_resource type="Script" uid="uid://bkkmwy1q3cf6y" path="res://scripts/Main.gd" id="1_fos0i"]
+[ext_resource type="Script" uid="uid://bgagqqscyw4ob" path="res://scripts/Player.gd" id="1_glv2v"]
+[ext_resource type="Texture2D" uid="uid://bdyfdy06khihp" path="res://art/player.png" id="3_3dxm6"]
+[ext_resource type="Script" uid="uid://bu5iedb8eofgb" path="res://scripts/camera_2d.gd" id="3_r0du0"]
+[ext_resource type="PackedScene" uid="uid://djarw284r0te1" path="res://scenes/enemy.tscn" id="4_03owx"]
+[ext_resource type="PackedScene" uid="uid://c5co8e8ajkg0a" path="res://scenes/Wall.tscn" id="7_lgr22"]
+[ext_resource type="Script" uid="uid://l8pfefsmsnge" path="res://scripts/maze_generator.gd" id="7_trn2v"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lgr22"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(0, 0, 512, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trn2v"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(0, 768, 512, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03owx"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(512, 768, 512, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wkp8b"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(512, 0, 512, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j4qnp"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(0, 0, 512, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_20pc6"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(0, 768, 512, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5vvyt"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(512, 768, 512, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c6i3y"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(0, 768, 512, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c2ibq"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(512, 768, 512, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fpfj3"]
+atlas = ExtResource("3_3dxm6")
+region = Rect2(512, 0, 512, 768)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_trn2v"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lgr22")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trn2v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_03owx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wkp8b")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j4qnp")
+}],
+"loop": true,
+"name": &"walk_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_20pc6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5vvyt")
+}],
+"loop": true,
+"name": &"walk_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c6i3y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c2ibq")
+}],
+"loop": true,
+"name": &"walk_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fpfj3")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_cm0pq"]
+radius = 22.0
+height = 76.0
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_fos0i")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+offset_left = -337.0
+offset_top = -245.0
+offset_right = 1606.0
+offset_bottom = 913.0
+color = Color(0, 0, 0, 1)
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(628, 311)
+script = ExtResource("1_glv2v")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+position = Vector2(-17.375, -10.0625)
+scale = Vector2(0.118652, 0.118652)
+sprite_frames = SubResource("SpriteFrames_trn2v")
+animation = &"walk_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2(-19, -13)
+shape = SubResource("CapsuleShape2D_cm0pq")
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Enemy2" parent="." instance=ExtResource("4_03owx")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(628, 311)
+position_smoothing_enabled = true
+script = ExtResource("3_r0du0")
+
+[node name="MazeGenerator" type="Node2D" parent="."]
+script = ExtResource("7_trn2v")
+wall_scene = ExtResource("7_lgr22")
+
+[node name="Wall" parent="MazeGenerator" instance=ExtResource("7_lgr22")]

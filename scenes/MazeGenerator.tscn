@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://c4r5b4uhg8jki"]
+
+[ext_resource type="Script" uid="uid://l8pfefsmsnge" path="res://scripts/maze_generator.gd" id="1_q8ngx"]
+[ext_resource type="PackedScene" uid="uid://c5co8e8ajkg0a" path="res://scenes/Wall.tscn" id="2_ftevm"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_q8ngx")
+wall_scene = ExtResource("2_ftevm")
