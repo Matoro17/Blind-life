@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var max_rooms := 2
-@export var room_size := Vector2(640, 640)  # 32 * 200, 500)
+@export var room_size := Vector2(600, 500)
 @export var start_room_scene: PackedScene = preload("res://scenes/room.tscn")
 @export var enemy_room_scene: PackedScene = preload("res://scenes/room.tscn")
 @export var end_room_scene: PackedScene = preload("res://scenes/room.tscn")
