@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://c4r5b4uhg8jki"]
+
+[ext_resource type="Script" uid="uid://l8pfefsmsnge" path="res://scripts/maze_generator.gd" id="1_q8ngx"]
+[ext_resource type="PackedScene" uid="uid://on4st4oj1uy2" path="res://scenes/room.tscn" id="2_ftevm"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_q8ngx")
+start_room_scene = ExtResource("2_ftevm")
+enemy_room_scene = ExtResource("2_ftevm")
+end_room_scene = ExtResource("2_ftevm")

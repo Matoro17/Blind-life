@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://b3203llpfocxm"]
+[gd_scene load_steps=4 format=3 uid="uid://b3203llpfocxm"]
 
 [ext_resource type="Texture2D" uid="uid://c374bkm010dq5" path="res://art/splash_screen.jpg" id="1_yqeox"]
 [ext_resource type="Script" uid="uid://c5m31l7l02b20" path="res://scenes/menu.gd" id="2_vjb58"]
+[ext_resource type="AudioStream" uid="uid://b6eq0yvweq0fx" path="res://audio/menu-ost.mp3" id="3_con2f"]
 
 [node name="Menu" type="Node2D"]
 
@@ -17,3 +18,9 @@ offset_right = 270.0
 offset_bottom = 548.0
 scale = Vector2(50.52, 13.64)
 script = ExtResource("2_vjb58")
+
+[node name="BackgroundMusic" type="AudioStreamPlayer2D" parent="Button"]
+position = Vector2(-5.18606, -39.5894)
+scale = Vector2(0.0197941, 0.0733138)
+stream = ExtResource("3_con2f")
+autoplay = true

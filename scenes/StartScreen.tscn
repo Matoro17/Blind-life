@@ -9,13 +9,13 @@ script = ExtResource("1_pswtb")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
-position = Vector2(582.5, 399.5)
+position = Vector2(965.498, 603.502)
 scale = Vector2(69.4609, 35.6016)
 texture = ExtResource("2_a0vbq")
 
 [node name="Label" type="Label" parent="."]
-offset_left = 487.0
-offset_top = 302.0
-offset_right = 671.0
-offset_bottom = 325.0
+offset_left = 869.998
+offset_top = 506.002
+offset_right = 1054.0
+offset_bottom = 529.002
 text = "Press 'Space Bar' to talk"

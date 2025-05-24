@@ -37,7 +37,7 @@ func update_animation(input_vector: Vector2):
 	
 func _ready():
 	# Posiciona o jogador no início do labirinto
-	var maze = get_node("res://MazeGenerator") 
+	var maze = preload("res://scenes/MazeGenerator.tscn")
 	if maze and maze.has_method("get_world_position"):
 		global_position = maze.get_world_position(maze.start_position)
 	else:

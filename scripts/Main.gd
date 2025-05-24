@@ -2,38 +2,35 @@ extends Node
 
 # Preload the enemy scene (update the path to your enemy scene)
 const Enemy = preload("res://scenes/enemy.tscn")
-@onready var maze_generator = $MazeGenerator
+@onready var maze_generator_scene = preload("res://scenes/MazeGenerator.tscn")
 @onready var player = $Player
 var viewport_rect
+var maze_generator_instance = null
 
 func _ready():
-	# Get the screen/viewport size
 	viewport_rect = get_viewport().get_visible_rect()
-	#maze_generator.generate_maze()
-	player.global_position = maze_generator.get_world_position(maze_generator.start_position)
-	#$Camera2D.setup_limits(maze_generator)
 	
-	#$MazeGenerator.generate_maze()
-#	$Player.initialize($MazeGenerator)
+	# Instance and add the maze generator
+	maze_generator_instance = maze_generator_scene.instantiate()
+	add_child(maze_generator_instance)
+	# Connect to the maze generated signal
+	maze_generator_instance.connect("maze_generated", _on_maze_generator_maze_generated)
 	spawn_enemies()
 	
 func _on_maze_generator_maze_generated():
 	# Chamado quando o labirinto terminar de gerar
+	player.global_position = maze_generator_instance.start_position
 	spawn_enemies()
 	
+func open_braille_terminal():
+	var terminal = preload("res://scenes/terminal.tscn").instantiate()
+	#terminal.connect(advance_level)
+	add_child(terminal)
 	
 func spawn_enemies():
-	# Spawn 10 enemies
-	for i in range(10):
-		# Create a new enemy instance
+	for i in range(2):
 		var enemy = Enemy.instantiate()
-		
-		# Generate random coordinates within the viewport
 		var random_x = randf_range(0, viewport_rect.size.x)
 		var random_y = randf_range(0, viewport_rect.size.y)
-		
-		# Set enemy position
 		enemy.position = Vector2(random_x, random_y)
-		
-		# Add enemy to the scene
 		add_child(enemy)

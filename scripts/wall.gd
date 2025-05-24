@@ -1,13 +1,13 @@
 extends StaticBody2D
 
 @onready var sprite: Sprite2D = $Sprite2D
-var is_visible: bool = false
+var is_visible: bool = true
 var can_be_revealed: bool = true
 
 func _ready():
 	# Para paredes invisíveis (apenas colisão)
 	add_to_group("wall")
-	sprite.modulate.a = 0.0
+	#sprite.modulate.a = 0.0
 	
 	# Ou configure uma cor sólida
 	var rect = RectangleShape2D.new()
@@ -33,3 +33,9 @@ func reveal():
 		#await get_tree().create_timer(1.0).timeout  # Cooldown before can be revealed again
 		can_be_revealed = true
 	)
+
+func disable_wall():
+	is_visible = false
+	can_be_revealed = false
+	$CollisionShape2D.disabled = true
+	sprite.visible = false

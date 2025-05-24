@@ -4,17 +4,16 @@
 [ext_resource type="Texture2D" uid="uid://7at3nb36dsu1" path="res://art/box.png" id="2_r2q6n"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gakk0"]
-size = Vector2(27, 28)
+size = Vector2(26, 26)
 
 [node name="Wall" type="StaticBody2D"]
-position = Vector2(-15, -14)
 script = ExtResource("1_awoh5")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(15, 15)
+position = Vector2(13, 13)
 scale = Vector2(0.0253906, 0.0253906)
 texture = ExtResource("2_r2q6n")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(14.5, 14)
+position = Vector2(13, 13)
 shape = SubResource("RectangleShape2D_gakk0")

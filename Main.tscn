@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://dknutgulkpand"]
+[gd_scene load_steps=25 format=3 uid="uid://dknutgulkpand"]
 
 [ext_resource type="Script" uid="uid://bkkmwy1q3cf6y" path="res://scripts/Main.gd" id="1_fos0i"]
 [ext_resource type="Script" uid="uid://bgagqqscyw4ob" path="res://scripts/Player.gd" id="1_glv2v"]
@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://djarw284r0te1" path="res://scenes/enemy.tscn" id="4_03owx"]
 [ext_resource type="PackedScene" uid="uid://c5co8e8ajkg0a" path="res://scenes/Wall.tscn" id="7_lgr22"]
 [ext_resource type="Script" uid="uid://l8pfefsmsnge" path="res://scripts/maze_generator.gd" id="7_trn2v"]
+[ext_resource type="Script" uid="uid://cwlr7pdsuq47j" path="res://scripts/door.gd" id="8_03owx"]
+[ext_resource type="PackedScene" uid="uid://2qw4hf22wbri" path="res://scenes/terminal.tscn" id="9_20pc6"]
+[ext_resource type="Texture2D" uid="uid://dpdxdmhl6xq4b" path="res://icon.svg" id="9_wkp8b"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lgr22"]
 atlas = ExtResource("3_3dxm6")
@@ -110,8 +113,20 @@ animations = [{
 radius = 22.0
 height = 76.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_03owx"]
+size = Vector2(125, 126)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wkp8b"]
+size = Vector2(152, 156)
+
 [node name="Main" type="Node2D"]
 script = ExtResource("1_fos0i")
+
+[node name="MazeGenerator" type="Node2D" parent="."]
+position = Vector2(329, 233)
+script = ExtResource("7_trn2v")
+
+[node name="Wall" parent="MazeGenerator" instance=ExtResource("7_lgr22")]
 
 [node name="ColorRect" type="ColorRect" parent="."]
 visible = false
@@ -122,7 +137,7 @@ offset_bottom = 913.0
 color = Color(0, 0, 0, 1)
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(628, 311)
+position = Vector2(852, 539)
 script = ExtResource("1_glv2v")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
@@ -140,14 +155,31 @@ shape = SubResource("CapsuleShape2D_cm0pq")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Enemy2" parent="." instance=ExtResource("4_03owx")]
+position = Vector2(329, 233)
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(628, 311)
+position = Vector2(957, 544)
 position_smoothing_enabled = true
 script = ExtResource("3_r0du0")
 
-[node name="MazeGenerator" type="Node2D" parent="."]
-script = ExtResource("7_trn2v")
-wall_scene = ExtResource("7_lgr22")
+[node name="Node2D" type="CharacterBody2D" parent="."]
+position = Vector2(224, 228)
+script = ExtResource("8_03owx")
+terminal_scene = ExtResource("9_20pc6")
 
-[node name="Wall" parent="MazeGenerator" instance=ExtResource("7_lgr22")]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D"]
+position = Vector2(495.5, 294)
+shape = SubResource("RectangleShape2D_03owx")
+
+[node name="TextureRect" type="TextureRect" parent="Node2D"]
+offset_left = 432.0
+offset_top = 230.0
+offset_right = 560.0
+offset_bottom = 358.0
+texture = ExtResource("9_wkp8b")
+
+[node name="ProximityArea" type="Area2D" parent="Node2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D/ProximityArea"]
+position = Vector2(494, 294)
+shape = SubResource("RectangleShape2D_wkp8b")
