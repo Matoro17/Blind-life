@@ -1,7 +1,7 @@
 extends StaticBody2D
 
 @onready var sprite: Sprite2D = $Sprite2D
-var is_visible: bool = true
+var is_visible: bool = false
 var can_be_revealed: bool = true
 
 func _ready():

@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://dknutgulkpand"]
+[gd_scene load_steps=8 format=3 uid="uid://dknutgulkpand"]
 
 [ext_resource type="Script" uid="uid://bkkmwy1q3cf6y" path="res://scripts/Main.gd" id="1_fos0i"]
+[ext_resource type="Script" uid="uid://bu5iedb8eofgb" path="res://scripts/camera_2d.gd" id="3_r0du0"]
 [ext_resource type="Script" uid="uid://cwlr7pdsuq47j" path="res://scripts/door.gd" id="8_03owx"]
 [ext_resource type="PackedScene" uid="uid://2qw4hf22wbri" path="res://scenes/terminal.tscn" id="9_20pc6"]
 [ext_resource type="Texture2D" uid="uid://dpdxdmhl6xq4b" path="res://icon.svg" id="9_wkp8b"]
@@ -23,6 +24,11 @@ offset_bottom = 913.0
 color = Color(0, 0, 0, 1)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(957, 544)
+position_smoothing_enabled = true
+script = ExtResource("3_r0du0")
 
 [node name="Door" type="CharacterBody2D" parent="."]
 position = Vector2(224, 228)

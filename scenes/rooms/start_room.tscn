@@ -1,3 +1,7 @@
 [gd_scene format=3 uid="uid://bbshl2ri24e1c"]
 
 [node name="StartRoom" type="Node2D"]
+position = Vector2(81, 69)
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(133, 106)

@@ -17,3 +17,4 @@ scale = Vector2(0.32, 0.32)
 texture = ExtResource("3_85yof")
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(218, 199)

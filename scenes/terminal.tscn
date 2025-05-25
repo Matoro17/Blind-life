@@ -7,9 +7,14 @@
 [node name="CanvasLayer" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+offset_left = 278.0
+offset_top = 255.0
+offset_right = 278.0
+offset_bottom = 255.0
 script = ExtResource("1_m430i")
 
 [node name="Panel" type="Panel" parent="."]
+layout_mode = 0
 offset_left = -278.0
 offset_top = -257.0
 offset_right = -84.0
