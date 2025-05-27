@@ -1,10 +1,13 @@
 extends Node2D
 
-@export var max_rooms := 10
+@export var max_rooms := 4
 @export var room_size := Vector2(640, 640)
 @export var start_room_scene: PackedScene = preload("res://scenes/room.tscn")
 @export var enemy_room_scene: PackedScene = preload("res://scenes/room.tscn")
 @export var end_room_scene: PackedScene = preload("res://scenes/room.tscn")
+@export var door_scene: PackedScene = preload("res://scenes/door.tscn")
+@export var item_scene: PackedScene = preload("res://scenes/item.tscn")
+
 
 var rooms = {}  # Dictionary with key: Vector2i (grid position), value: room data
 var start_room_pos = Vector2i(0, 0)
@@ -50,6 +53,35 @@ func generate_dungeon():
 
 	find_and_mark_end_room()
 	call_deferred("emit_signal", "maze_generated")
+		# DEBUG
+	print("Calling item placement")
+	place_item_in_random_room()
+
+func place_item_in_random_room():
+	if item_scene == null:
+		printerr("❌ No item scene provided!")
+		return
+
+	var candidate_rooms := []
+	for room_pos in rooms:
+		var type = rooms[room_pos]["type"]
+		if type == "enemy":  # or type != "start" and type != "end"
+			candidate_rooms.append(room_pos)
+
+	if candidate_rooms.is_empty():
+		print("⚠️ No suitable rooms to place item.")
+		return
+
+	var selected_pos = candidate_rooms.pick_random()
+	var room_node = rooms[selected_pos]["node"]
+	var room_center = Vector2(selected_pos) * room_size + room_size / 2
+
+	var item = item_scene.instantiate()
+	item.position = room_center
+	room_node.add_child(item)
+
+	print("🎁 Item placed in room at:", selected_pos)
+
 
 func add_room(grid_pos: Vector2i, room_type: String):
 	print("Room added at grid: ", grid_pos)
@@ -113,16 +145,39 @@ func find_and_mark_end_room():
 
 	end_room_pos = farthest_room_pos
 
-	# Clean up old room node
 	var old_node = rooms[end_room_pos]["node"]
 	if is_instance_valid(old_node):
 		old_node.queue_free()
 
-	# Create new end room
 	var end_room = instantiate_room_scene("end")
 	end_room.position = Vector2(end_room_pos) * room_size
 	add_child(end_room)
 
 	rooms[end_room_pos]["node"] = end_room
 	rooms[end_room_pos]["type"] = "end"
-	end_room.call_deferred("configure_exits", rooms[end_room_pos]["exits"])
+
+	var exits = rooms[end_room_pos]["exits"]
+	end_room.call_deferred("configure_exits", exits)
+
+	if exits.size() > 0 and door_scene:
+		var selected_dir = exits.pick_random()
+		var adjacent_pos = end_room_pos + selected_dir
+		print("🗝️ Adding door between ", end_room_pos, " and ", adjacent_pos)
+
+		var door = door_scene.instantiate()
+		var mid_pos = (Vector2(end_room_pos) + Vector2(adjacent_pos)) * room_size / 2
+		door.position = mid_pos
+
+		match selected_dir:
+			Vector2i.LEFT:
+				door.rotation_degrees = 270
+			Vector2i.RIGHT:
+				door.rotation_degrees = 90
+			Vector2i.UP:
+				door.rotation_degrees = 0
+			Vector2i.DOWN:
+				door.rotation_degrees = 180
+
+		add_child(door)
+	else:
+		print("⚠️ Could not add door: exits.size() =", exits.size(), ", door_scene =", door_scene)

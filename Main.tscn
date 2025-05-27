@@ -1,15 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://dknutgulkpand"]
+[gd_scene load_steps=2 format=3 uid="uid://dknutgulkpand"]
 
 [ext_resource type="Script" uid="uid://bkkmwy1q3cf6y" path="res://scripts/Main.gd" id="1_fos0i"]
-[ext_resource type="Script" uid="uid://cwlr7pdsuq47j" path="res://scripts/door.gd" id="8_03owx"]
-[ext_resource type="PackedScene" uid="uid://2qw4hf22wbri" path="res://scenes/terminal.tscn" id="9_20pc6"]
-[ext_resource type="Texture2D" uid="uid://dpdxdmhl6xq4b" path="res://icon.svg" id="9_wkp8b"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_03owx"]
-size = Vector2(125, 126)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_wkp8b"]
-size = Vector2(152, 156)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_fos0i")
@@ -23,25 +14,3 @@ offset_bottom = 913.0
 color = Color(0, 0, 0, 1)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Door" type="CharacterBody2D" parent="."]
-position = Vector2(224, 228)
-script = ExtResource("8_03owx")
-terminal_scene = ExtResource("9_20pc6")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Door"]
-position = Vector2(495.5, 294)
-shape = SubResource("RectangleShape2D_03owx")
-
-[node name="TextureRect" type="TextureRect" parent="Door"]
-offset_left = 432.0
-offset_top = 230.0
-offset_right = 560.0
-offset_bottom = 358.0
-texture = ExtResource("9_wkp8b")
-
-[node name="ProximityArea" type="Area2D" parent="Door"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Door/ProximityArea"]
-position = Vector2(494, 294)
-shape = SubResource("RectangleShape2D_wkp8b")

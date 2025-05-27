@@ -11,7 +11,7 @@ position = Vector2(-2, -1)
 script = ExtResource("1_vxwiy")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0.635448, 1, 0.636746, 1)
+modulate = Color(4.79382e-05, 0.900038, 0.214896, 1)
 position = Vector2(6.63824, -7.75)
 scale = Vector2(0.704952, 0.704952)
 texture = ExtResource("2_vxwiy")

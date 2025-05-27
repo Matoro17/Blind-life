@@ -93,3 +93,4 @@ func _spawn_wall_block(pos: Vector2):
 	var wall = WALL_BLOCK_SCENE.instantiate()
 	wall.position = pos.snapped(Vector2(25, 25))
 	add_child(wall)
+	wall.is_visible = false

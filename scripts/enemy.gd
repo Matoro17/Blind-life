@@ -17,8 +17,11 @@ func _ready():
 	add_to_group("enemies")
 	sprite.modulate.a = 0.0
 	detection_area.area_entered.connect(_on_detection_area_entered)
+	detection_area.connect("body_entered", Callable(self, "_on_damage_area_body_entered"))
 
 func _physics_process(delta):
+	if target and position.distance_to(target.global_position) < 10.0:
+		target.call("take_damage")
 	if not is_visible:
 		return
 	# Chase either player or last known position
