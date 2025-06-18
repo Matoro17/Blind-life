@@ -61,7 +61,8 @@ func reset_sonar():
 	collision_shape.shape.radius = 0.0
 
 func _on_body_entered(body):
-	if body.is_in_group("enemies") or body.is_in_group("wall"):
+	#print("Body: " + body.name)
+	if body.is_in_group("enemies") or body.is_in_group("wall") or body.is_in_group("door"):
 		# Verificação de linha de visão melhorada
 		var space_state = get_world_2d().direct_space_state
 		var params = PhysicsRayQueryParameters2D.create(

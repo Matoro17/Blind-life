@@ -1,8 +1,9 @@
-[gd_scene load_steps=35 format=3 uid="uid://b64lfnvar1hif"]
+[gd_scene load_steps=38 format=3 uid="uid://b64lfnvar1hif"]
 
 [ext_resource type="Script" uid="uid://bgagqqscyw4ob" path="res://scripts/Player.gd" id="1_v6fml"]
 [ext_resource type="Texture2D" uid="uid://bdyfdy06khihp" path="res://art/player.png" id="2_3li8b"]
 [ext_resource type="Texture2D" uid="uid://b0bf0xxvx4j4f" path="res://art/player_v2.png" id="3_3li8b"]
+[ext_resource type="Shader" uid="uid://bannygmjmjbch" path="res://scenes/Player.gdshader" id="4_mdl7e"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lgr22"]
 atlas = ExtResource("2_3li8b")
@@ -260,9 +261,20 @@ animations = [{
 radius = 22.0
 height = 76.0
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mdl7e"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qu4a1"]
+shader = ExtResource("4_mdl7e")
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
+shader_parameter/radius = 0.2
+shader_parameter/softness = 0.15
+shader_parameter/viewport_size = Vector2(0, 0)
+
 [node name="Player" type="Node2D"]
 
 [node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(18, 6)
+up_direction = Vector2(0.611908, -0.790929)
 script = ExtResource("1_v6fml")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
@@ -282,3 +294,27 @@ position = Vector2(-19, -13)
 shape = SubResource("CapsuleShape2D_qu4a1")
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player"]
+position = Vector2(-18, -2)
+remote_path = NodePath("../..")
+
+[node name="ItemCollectionArea" type="Area2D" parent="Player"]
+position = Vector2(1, -1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/ItemCollectionArea"]
+light_mask = 5
+visibility_layer = 5
+position = Vector2(-19, -12)
+scale = Vector2(2.96486, 3.04486)
+shape = SubResource("CapsuleShape2D_mdl7e")
+
+[node name="VignetteLayer" type="CanvasLayer" parent="Player"]
+layer = 0
+
+[node name="ColorRect" type="ColorRect" parent="Player/VignetteLayer"]
+material = SubResource("ShaderMaterial_qu4a1")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)

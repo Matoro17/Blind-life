@@ -7,7 +7,6 @@
 radius = 198.023
 
 [node name="SonarEmitter" type="Area2D"]
-position = Vector2(-2, -1)
 script = ExtResource("1_vxwiy")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -17,5 +16,7 @@ scale = Vector2(0.704952, 0.704952)
 texture = ExtResource("2_vxwiy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+light_mask = 4
+visibility_layer = 4
 position = Vector2(2.27649, 2)
 shape = SubResource("CircleShape2D_yo3cd")

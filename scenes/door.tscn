@@ -35,7 +35,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pg2b6"]
-size = Vector2(175, 180)
+size = Vector2(219.649, 202.753)
 
 [node name="Node2D" type="Node2D"]
 
@@ -58,5 +58,5 @@ sprite_frames = SubResource("SpriteFrames_kgbum")
 position = Vector2(1, 1.00002)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door/ProximityArea"]
-position = Vector2(-2, -2)
+position = Vector2(-1, -1.00002)
 shape = SubResource("RectangleShape2D_pg2b6")

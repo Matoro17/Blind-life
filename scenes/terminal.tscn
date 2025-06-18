@@ -1,16 +1,21 @@
 [gd_scene load_steps=4 format=3 uid="uid://2qw4hf22wbri"]
 
 [ext_resource type="Script" uid="uid://qdpf4x5gksq6" path="res://scripts/BrailleTerminal.gd" id="1_m430i"]
-[ext_resource type="Texture2D" uid="uid://dpdxdmhl6xq4b" path="res://icon.svg" id="2_sy66w"]
+[ext_resource type="Texture2D" uid="uid://dedclh8p163h6" path="res://art/dot_sprite_2.png" id="2_vs6ym"]
 [ext_resource type="Script" uid="uid://baon156jihyq4" path="res://scripts/enter_button_terminal.gd" id="4_dhnb1"]
 
 [node name="CanvasLayer" type="Control"]
+light_mask = 16
+visibility_layer = 16
+z_index = -1
 layout_mode = 3
-anchors_preset = 0
-offset_left = 278.0
-offset_top = 255.0
-offset_right = 278.0
-offset_bottom = 255.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_m430i")
 
 [node name="Panel" type="Panel" parent="."]
@@ -41,44 +46,46 @@ columns = 2
 layout_mode = 2
 toggle_mode = true
 action_mode = 0
-texture_normal = ExtResource("2_sy66w")
+texture_normal = ExtResource("2_vs6ym")
 
 [node name="Dot1" type="TextureButton" parent="Panel/BrailleGrid"]
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("2_sy66w")
+texture_normal = ExtResource("2_vs6ym")
 
 [node name="Dot2" type="TextureButton" parent="Panel/BrailleGrid"]
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("2_sy66w")
+texture_normal = ExtResource("2_vs6ym")
 
 [node name="Dot3" type="TextureButton" parent="Panel/BrailleGrid"]
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("2_sy66w")
+texture_normal = ExtResource("2_vs6ym")
 
 [node name="Dot4" type="TextureButton" parent="Panel/BrailleGrid"]
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("2_sy66w")
+texture_normal = ExtResource("2_vs6ym")
 
 [node name="Dot5" type="TextureButton" parent="Panel/BrailleGrid"]
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("2_sy66w")
+texture_normal = ExtResource("2_vs6ym")
 
 [node name="BtnClose" type="Button" parent="Panel"]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 158.0
-offset_right = 86.0
-offset_bottom = 179.0
+offset_left = 39.154
+offset_top = 153.868
+offset_right = 85.154
+offset_bottom = 184.868
+text = "Sair"
 
 [node name="BtnEnter" type="Button" parent="Panel"]
 layout_mode = 0
-offset_left = 108.0
-offset_top = 159.0
-offset_right = 152.0
-offset_bottom = 179.0
+offset_left = 106.128
+offset_top = 153.525
+offset_right = 156.128
+offset_bottom = 184.525
+text = "Enter"
 script = ExtResource("4_dhnb1")

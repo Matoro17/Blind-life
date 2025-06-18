@@ -25,8 +25,9 @@ func configure_exits(exit_dirs: Array):
 func setup_contents():
 	match room_type:
 		"start":
-			var player = PLAYER_SCENE.instantiate()
-			$SpawnPoint.add_child(player)
+			print("johson")
+			#var player = PLAYER_SCENE.instantiate()
+			#$SpawnPoint.add_child(player)
 		"enemy":
 			spawn_enemies()
 		"end":

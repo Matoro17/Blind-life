@@ -7,7 +7,7 @@ var can_be_revealed: bool = true
 func _ready():
 	# Para paredes invisíveis (apenas colisão)
 	add_to_group("wall")
-	#sprite.modulate.a = 0.0
+	sprite.modulate.a = 0.0
 	
 	# Ou configure uma cor sólida
 	var rect = RectangleShape2D.new()
@@ -18,7 +18,7 @@ func reveal():
 	if not can_be_revealed:
 		return
 	
-	can_be_revealed = false
+	#can_be_revealed = false
 	is_visible = true
 	
 	var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SINE)

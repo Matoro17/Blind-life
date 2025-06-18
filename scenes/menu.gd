@@ -5,7 +5,7 @@ extends Button
 
 func _ready():
 	# Set initial volume (0-1)
-	background_music.volume_db = linear_to_db(0.5)
+	background_music.volume_db = linear_to_db(5)
 	pressed.connect(_on_pressed)
 	
 	# Or fade in over 2 seconds

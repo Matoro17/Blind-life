@@ -1,12 +1,20 @@
 extends Node2D
 
-@export var max_rooms := 4
+@export var max_rooms := 3
 @export var room_size := Vector2(640, 640)
 @export var start_room_scene: PackedScene = preload("res://scenes/room.tscn")
 @export var enemy_room_scene: PackedScene = preload("res://scenes/room.tscn")
 @export var end_room_scene: PackedScene = preload("res://scenes/room.tscn")
 @export var door_scene: PackedScene = preload("res://scenes/door.tscn")
 @export var item_scene: PackedScene = preload("res://scenes/item.tscn")
+var start_room_image: Texture2D = preload("res://art/arrow_keys.jpg")
+const WALL_SCENE := preload("res://scenes/Wall.tscn")
+
+var current_item_letter: String = "" # New: Store the letter of the item for the current level
+
+# List of possible braille letters for items
+const BRAILLE_LETTERS = ["a", "b", "c", "d", "e"] # Extend as needed
+
 
 
 var rooms = {}  # Dictionary with key: Vector2i (grid position), value: room data
@@ -18,11 +26,16 @@ signal maze_generated
 func _ready():
 	randomize()
 	generate_dungeon()
+	
+func getCurrentCode():
+	return current_item_letter
 
 func generate_dungeon():
 	for child in get_children():
 		child.queue_free()
 	rooms.clear()
+	current_item_letter = BRAILLE_LETTERS.pick_random()
+	print("🔑 Maze key for this level is: ", current_item_letter)
 
 	add_room(start_room_pos, "start")
 
@@ -65,7 +78,7 @@ func place_item_in_random_room():
 	var candidate_rooms := []
 	for room_pos in rooms:
 		var type = rooms[room_pos]["type"]
-		if type == "enemy":  # or type != "start" and type != "end"
+		if type == "enemy" and room_pos != start_room_pos and room_pos != end_room_pos:  # or type != "start" and type != "end"
 			candidate_rooms.append(room_pos)
 
 	if candidate_rooms.is_empty():
@@ -77,10 +90,16 @@ func place_item_in_random_room():
 	var room_center = Vector2(selected_pos) * room_size + room_size / 2
 
 	var item = item_scene.instantiate()
-	item.position = room_center
+		# New: Randomly select a braille letter for this level's key item
+	item.letter = current_item_letter # Assign the chosen letter to the item instance
+	
+	var margin = 32  # Deixar um espaço de margem para não colar nas bordas
+	var random_x = randf_range(margin, room_size.x - margin)
+	var random_y = randf_range(margin, room_size.y - margin)
+	item.position = Vector2(random_x, random_y)
 	room_node.add_child(item)
 
-	print("🎁 Item placed in room at:", selected_pos)
+	print("🎁 Item placed in room at:", selected_pos, " with letter: ", current_item_letter)
 
 
 func add_room(grid_pos: Vector2i, room_type: String):
@@ -89,6 +108,7 @@ func add_room(grid_pos: Vector2i, room_type: String):
 		return
 
 	var new_room = instantiate_room_scene(room_type)
+	new_room.room_type = room_type
 	var room_world_position = Vector2(grid_pos) * room_size
 	new_room.position = room_world_position
 	add_child(new_room)
@@ -102,6 +122,20 @@ func add_room(grid_pos: Vector2i, room_type: String):
 
 	if room_type == "start":
 		start_position = room_world_position + room_size / 2
+		var image_node = Sprite2D.new()
+		image_node.texture = start_room_image
+		image_node.modulate.a = 0.1
+		image_node.scale = Vector2(0.2, 0.2)
+		image_node.position = room_size / 2  # Coloca no centro da sala
+		# ✅ Adicionar 3 paredes acima do sprite
+		var base_pos = image_node.position + Vector2(0, -48)  # Um pouco acima (ajuste a distância como quiser)
+		var spacing = 32  # Espaçamento horizontal entre as paredes
+		for i in range(3):
+			var wall_instance = WALL_SCENE.instantiate()
+			wall_instance.position = base_pos + Vector2(0 , (i - 1) * spacing)  # Centraliza as 3 paredes
+			new_room.add_child(wall_instance)
+		new_room.add_child(image_node)
+		
 
 func connect_rooms(pos_a: Vector2i, pos_b: Vector2i):
 	var direction = pos_b - pos_a
@@ -165,6 +199,11 @@ func find_and_mark_end_room():
 		print("🗝️ Adding door between ", end_room_pos, " and ", adjacent_pos)
 
 		var door = door_scene.instantiate()
+		if door.has_node("Door"):
+			var door_logic = door.get_node("Door")
+			door_logic.set_correct_braille_code(current_item_letter)
+		else:
+			printerr("❌ Porta instanciada, mas não foi encontrado o nó 'Door' dentro dela.")
 		var mid_pos = (Vector2(end_room_pos) + Vector2(adjacent_pos)) * room_size / 2
 		door.position = mid_pos
 

@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://dknutgulkpand"]
+
+[ext_resource type="Script" uid="uid://bkkmwy1q3cf6y" path="res://scripts/Main.gd" id="1_fos0i"]
+[ext_resource type="Shader" uid="uid://higyg0ag1r46" path="res://scenes/fog_of_war.gdshader" id="2_uu6xs"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r0du0"]
+shader = ExtResource("2_uu6xs")
+shader_parameter/sonar_center = Vector2(99.62, 71.315)
+shader_parameter/reveal_radius = 75.315
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_fos0i")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+offset_left = -337.0
+offset_top = -245.0
+offset_right = 1606.0
+offset_bottom = 913.0
+color = Color(0, 0, 0, 1)
+
+[node name="FogOfWar" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="FogOfWar"]
+material = SubResource("ShaderMaterial_r0du0")
+offset_right = 1925.0
+offset_bottom = 1085.0
+color = Color(0, 0, 0, 1)

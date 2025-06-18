@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1amy0ax1e55k"]
+
+[ext_resource type="Script" uid="uid://cy55n0q2hncy8" path="res://scripts/collectibles_ui.gd" id="1_25ntt"]
+
+[node name="CollectiblesUI" type="CanvasLayer"]
+layer = -1
+script = ExtResource("1_25ntt")
+
+[node name="UIPanel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CollectedItemsHBox" type="HBoxContainer" parent="UIPanel"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 100.0
+offset_right = 140.0
+offset_bottom = 140.0
