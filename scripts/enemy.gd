@@ -7,6 +7,8 @@ var target: Node2D
 var is_visible: bool = false
 var can_be_revealed: bool = true
 var last_known_position: Vector2
+var reveal_sound = preload("res://audio/enemy.wav")
+
 
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -35,6 +37,7 @@ func _physics_process(delta):
 func _on_detection_area_entered(area: Area2D):
 	if area.is_in_group("sonar"):
 		reveal()
+		
 		# Store player position when sonar was emitted
 		last_known_position = area.global_position
 		
@@ -54,6 +57,11 @@ func reveal():
 	
 	can_be_revealed = false
 	is_visible = true
+	var player = AudioStreamPlayer2D.new()
+	player.stream = reveal_sound
+	player.global_position = global_position
+	get_tree().current_scene.add_child(player)
+	player.play()
 	
 	var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SINE)
 	# Quick fade-in

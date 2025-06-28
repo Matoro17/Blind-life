@@ -5,6 +5,8 @@ const Enemy = preload("res://scenes/enemy.tscn")
 @onready var PlayerScene = preload("res://scenes/Player.tscn")
 @onready var collectibles_ui_scene = preload("res://scenes/collectibles_ui.tscn")
 
+@onready var main_music = AudioStreamPlayer.new()
+
 var player: Node2D = null
 var viewport_rect
 var maze_generator_instance = null
@@ -14,6 +16,8 @@ var collected_items_letters: Array[String] = [] # NEW: Stores collected item let
 const TERMINAL_SCENE = preload("res://scenes/terminal.tscn")
 var current_terminal_instance = null
 var correct_braille_code = null
+
+var current_level: int = 1
 
 func _ready():
 	viewport_rect = get_viewport().get_visible_rect()
@@ -25,11 +29,17 @@ func _ready():
 	print("✅ MazeGenerator added to scene.")
 
 	maze_generator_instance.connect("maze_generated", _on_maze_generator_maze_generated)
-	spawn_enemies()
 	
 	collectibles_ui_instance = collectibles_ui_scene.instantiate()
 	add_child(collectibles_ui_instance)
 	correct_braille_code = maze_generator_instance.getCurrentCode()
+	
+	var music_stream = load("res://audio/full-sound-track.mp3")
+	main_music.stream = music_stream
+	main_music.autoplay = true
+	main_music.volume_db = -20
+	add_child(main_music)
+	main_music.play()
 
 func _on_maze_generator_maze_generated():
 	print("🌀 Maze generation completed.")
@@ -68,6 +78,33 @@ func _on_maze_generator_maze_generated():
 	print("🔑 Current level key braille letter: ", current_level_key_braille_letter)
 
 	spawn_enemies()
+	
+	# Connect the door signal directly from the MazeGenerator's door instance
+	# MazeGenerator should have a reference to its door or emit a signal with the door.
+	# For simplicity, we'll iterate through maze_generator_instance's children
+	# as the door is a child of maze_generator_instance.
+	var door_found = false
+	for child in maze_generator_instance.get_children():
+		if child.is_in_group("door"): # Ensure your door is in the "door" group
+			var door_node = child as Node
+			# Disconnect any previous connections to prevent multiple calls
+			if door_node.is_connected("door_opened_correctly", Callable(self, "_on_door_opened")):
+				door_node.disconnect("door_opened_correctly", Callable(self, "_on_door_opened"))
+
+			# Connect the signal from the newly created door
+			var success := door_node.connect("door_opened_correctly", Callable(self, "_on_door_opened"))
+			print("🔗 Conectando porta (de MazeGenerator) ao Main.gd. Sucesso: ", success)
+			door_found = true
+			break
+	if not door_found:
+		printerr("❌ Could not find a door in MazeGenerator children to connect.")
+
+
+
+func _on_door_opened():
+	print("🚪 Porta aberta com sucesso! Avançando para o próximo nível...")
+	advance_to_next_level()
+
 func open_braille_terminal():
 	if current_terminal_instance: # Don't open multiple terminals
 		return
@@ -92,9 +129,10 @@ func open_braille_terminal():
 
 func spawn_enemies():
 	var room_keys = maze_generator_instance.rooms.keys()
-	for i in range(2):
-		var enemy = Enemy.instantiate()
+	var enemy_count = maze_generator_instance.get_meta("enemy_count") if maze_generator_instance.has_meta("enemy_count") else 0
 
+	for i in range(enemy_count):
+		var enemy = Enemy.instantiate()
 		var room_pos = room_keys[randi() % room_keys.size()]
 		while room_pos == maze_generator_instance.start_room_pos:
 			room_pos = room_keys[randi() % room_keys.size()]
@@ -125,6 +163,10 @@ func _on_player_item_collected(item_letter: String, item_texture: Texture2D):
 				if child is Node2D and child.is_in_group("door"): # Ensure your door is in the "door" group
 					var door_node = child as Node
 					if door_node.has_method("set_correct_braille_code"):
+						child.connect("door_opened_correctly", Callable(self, "_on_door_opened"))
+						print("🔗 Tentando conectar sinal da porta: ", child.name)
+						var success := child.connect("door_opened_correctly", Callable(self, "_on_door_opened"))
+						print("✅ Conexão feita? ", success)
 						door_node.set_correct_braille_code(item_letter)
 						found_door = true
 						break # Assuming only one door per level for now
@@ -133,24 +175,46 @@ func _on_player_item_collected(item_letter: String, item_texture: Texture2D):
 				
 func _on_braille_code_entered(is_correct: bool):
 	print("Terminal signal received! Code entered correctly: ", is_correct)
-	
-	if is_correct:
-		print("Braille code was correct! Unlocking the door...")
-		# Add logic here to open the door, advance level, etc.
-		# You might need to find the specific door node and call a method on it.
-		# Example:
-		# var door_to_open = get_node("Your/Path/To/The/Door") # Or find it dynamically
-		# if door_to_open and door_to_open.has_method("open_door"):
-		#     door_to_open.open_door()
-	else:
-		print("Braille code was incorrect. Try again!")
-		# Add logic for incorrect code (e.g., sound effect, hint, reset terminal)
 
-	# After handling the result, hide or remove the terminal
+	if is_correct:
+		print("🎉 Código Braille correto! Iniciando próximo nível...")
+		advance_to_next_level()
+	else:
+		print("❌ Código Braille incorreto. Tente novamente!")
+
 	if current_terminal_instance:
 		current_terminal_instance.queue_free()
-		current_terminal_instance = null # Clear the reference
+		current_terminal_instance = null
+
 		
+func advance_to_next_level():
+	current_level += 1
+	
+	# Aumentar complexidade com base no nível
+	var new_max_rooms = clamp(3 + current_level * 2, 3, 20)
+	var new_enemy_count = clamp(current_level - 1, 0, 10)
+
+	# Remover o labirinto antigo
+	if maze_generator_instance and is_instance_valid(maze_generator_instance):
+		maze_generator_instance.queue_free()
+
+	# Criar novo labirinto com novo tamanho e número de inimigos
+	maze_generator_instance = maze_generator_scene.instantiate()
+	add_child(maze_generator_instance)
+
+	maze_generator_instance.max_rooms = new_max_rooms
+	maze_generator_instance.room_size = Vector2(640, 640) # Se quiser manter fixo
+
+	# Reconectar o sinal
+	maze_generator_instance.connect("maze_generated", _on_maze_generator_maze_generated)
+
+	# Salvar código correto (será sobrescrito ao gerar)
+	correct_braille_code = maze_generator_instance.getCurrentCode()
+
+	# Atualize o contador de inimigos a spawnar
+	maze_generator_instance.set_meta("enemy_count", new_enemy_count)
+
+	print("🚀 Avançando para o nível ", current_level)
 
 # NEW: Helper function to get braille code for a letter
 func get_braille_code_for_letter(letter: String) -> Array:

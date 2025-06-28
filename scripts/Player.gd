@@ -6,6 +6,8 @@ extends CharacterBody2D
 const SONAR_EMITTER = preload("res://scenes/sonar_emitter.tscn")
 const CAMERA_SCENE = preload("res://scenes/camera_2d.tscn")
 const GAME_OVER_DIALOG_SCENE = preload("res://scenes/gameOverDialog.tscn")
+var damage_sound = preload("res://audio/hitHurt.wav")
+var power_up_sound = preload("res://audio/powerUp.wav")
 
 signal item_collected(letter: String, texture: Texture2D)
 
@@ -26,6 +28,18 @@ var base_visibility_radius: float = 0.15
 var sonar_expansion_radius: float = 0.25 
 # Duração da animação de expansão/contração do sonar na vinheta
 var sonar_vignette_duration: float = 0.8 
+
+var is_frozen = false
+
+func freeze():
+	is_frozen = true
+	set_process(false)
+	set_physics_process(false)
+
+func unfreeze():
+	is_frozen = false
+	set_process(true)
+	set_physics_process(true)
 
 func _ready() -> void:
 	print("🚶‍♂️ Player READY at: ", global_position, " | ID: ", self.get_instance_id())
@@ -103,7 +117,11 @@ func take_damage():
 
 	health -= 1
 	print("💥 Player took damage! Health: ", health)
-
+	var player = AudioStreamPlayer2D.new()
+	player.stream = damage_sound
+	player.global_position = global_position
+	get_tree().current_scene.add_child(player)
+	player.play()
 	is_invulnerable = true
 	start_blinking()
 
@@ -200,9 +218,7 @@ func _on_enemy_body_entered(body):
 	if body.is_in_group("enemies"):
 		take_damage()
 
-func _on_item_collection_area_area_entered(area: Area2D):
-	print("Item collection area entered by: ", area.name)
-	
+func _on_item_collection_area_area_entered(area: Area2D):	
 	if area.is_in_group("items"):
 		print("Item group detected!")
 		if area.has_method("get_item_data"):
@@ -213,6 +229,10 @@ func _on_item_collection_area_area_entered(area: Area2D):
 			
 			# Emit signal to Main
 			item_collected.emit(item_letter, item_texture)
-			
+			var player = AudioStreamPlayer2D.new()
+			player.stream = power_up_sound
+			player.global_position = global_position
+			get_tree().current_scene.add_child(player)
+			player.play()
 			increase_visibility(0.05) # Increase vignette
 			area.queue_free() # Remove the item from the scene

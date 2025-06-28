@@ -13,6 +13,9 @@ var player_in_range := false
 var player
 var is_visible: bool = false
 var can_be_revealed: bool = true
+var terminal_open: bool = false
+
+signal door_opened_correctly
 
 func _ready():
 	$ProximityArea.body_entered.connect(_on_body_entered)
@@ -71,14 +74,18 @@ func is_player_facing() -> bool:
 
 
 func open_terminal():
+	if terminal_open:
+		print("⛔ Terminal is already open.")
+		return
 	if terminal_scene == null:
 		push_error("❌ terminal_scene is not assigned!")
 		return
 
+	terminal_open = true  # <-- Mark as open
+
 	var terminal = terminal_scene.instantiate()
 	terminal.set_correct_code(door_correct_braille_code)
 
-	# Add to CanvasLayer if it exists
 	var canvas := get_tree().get_root().find_child("CanvasLayer", true, false)
 	if canvas:
 		canvas.add_child(terminal)
@@ -86,34 +93,43 @@ func open_terminal():
 		print("⚠️ CanvasLayer not found — fallback to adding directly")
 		add_child(terminal)
 
-	# Position terminal at screen center
 	if terminal is Control:
-		canvas.add_child(terminal)
 		await get_tree().process_frame
 		var screen_size = get_viewport().get_visible_rect().size
 		terminal.position = (screen_size / 2.0) - (terminal.size / 2.0)
 	else:
 		var camera := get_viewport().get_camera_2d()
-		if camera:
-			terminal.global_position = camera.global_position
-		else:
-			terminal.global_position = global_position
+		terminal.global_position = camera.global_position if camera else global_position
 
-	# Freeze player
-	player.set_process(false)
+	player.set_process(false)  # Freeze player movement
+	player.set_physics_process(false)
+	if player.has_method("freeze"):  # Optional: define a custom freeze() in player
+		player.freeze()
+
 	hide_interact_message()
 
-	# Connect signal to handle validation
+	# Connect both validation and closing
 	terminal.code_validated.connect(_on_terminal_validated)
+	terminal.tree_exited.connect(_on_terminal_closed)  # NEW
 
+func _on_terminal_closed():
+	terminal_open = false
+	if player:
+		player.set_process(true)
+		player.set_physics_process(true)
+		if player.has_method("unfreeze"):
+			player.unfreeze()
 
 func _on_terminal_validated():
 	print("✅ Código correto, abrindo porta...")
 	collision_shape.disabled = true
 	collision_shape_interact.disabled = true
 	sprite.play("open")
+	
 	if player:
 		player.set_process(true)  # Desbloqueia o jogador
+
+	emit_signal("door_opened_correctly")  # 🔔 Emitimos aqui!
 
 func show_interact_message():
 	print("Press SPACE to interact")  # Replace with UI label if needed

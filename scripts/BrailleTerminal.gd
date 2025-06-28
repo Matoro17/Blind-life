@@ -5,6 +5,7 @@ signal code_validated
 
 # Removed 'const CORRECT_CODE' - now it's dynamic
 var CORRECT_CODE: Array = [] # New: Now a variable to be set dynamically
+var bip_sound = preload("res://audio/blipSelect.wav")
 
 var dots := []
 func _ready():
@@ -26,6 +27,12 @@ func _ready():
 
 func _on_dot_pressed(dot: TextureButton):
 	dot.modulate = Color.GREEN if dot.button_pressed else Color.WHITE
+	
+	var player = AudioStreamPlayer2D.new()
+	player.stream = bip_sound
+	player.global_position = global_position
+	get_tree().current_scene.add_child(player)
+	player.play()
 
 func _on_close_pressed():
 	queue_free()

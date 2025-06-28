@@ -68,7 +68,7 @@ func generate_dungeon():
 	call_deferred("emit_signal", "maze_generated")
 		# DEBUG
 	print("Calling item placement")
-	place_item_in_random_room()
+	call_deferred("place_item_in_random_room")
 
 func place_item_in_random_room():
 	if item_scene == null:
