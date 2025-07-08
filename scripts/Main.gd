@@ -18,6 +18,7 @@ var current_terminal_instance = null
 var correct_braille_code = null
 
 var current_level: int = 1
+const MAX_LEVELS: int = 3
 
 func _ready():
 	viewport_rect = get_viewport().get_visible_rect()
@@ -56,20 +57,22 @@ func _on_maze_generator_maze_generated():
 			var spawn_point = start_room.get_node("SpawnPoint")
 			print("🎯 SpawnPoint found: ", spawn_point)
 
-			print("🧍 Instantiating Player...")
-			player = PlayerScene.instantiate()
-			if player.has_signal("item_collected"): # Always good to check if signal exists
-				player.connect("item_collected", _on_player_item_collected)
+			if player and is_instance_valid(player):
+				# Se o jogador já existe (veio do nível anterior)
+				# Movemos ele para o novo ponto de spawn
+				if player.get_parent():
+					player.get_parent().remove_child(player) # Remove da Main
+				spawn_point.add_child(player)
+				player.position = Vector2.ZERO
+				print("✅ Jogador movido para o novo spawn point.")
 			else:
-				printerr("❌ Player scene does not have 'item_collected' signal! Check player.gd")
-
-			if player:
+				# Se o jogador não existe (primeiro nível do jogo)
+				print("🧍 Instantiating Player for the first time...")
+				player = PlayerScene.instantiate()
+				player.connect("item_collected", _on_player_item_collected)
 				spawn_point.add_child(player)
 				player.position = Vector2.ZERO
 				print("✅ Player instantiated at SpawnPoint.")
-				# Camera now handled internally by player
-			else:
-				printerr("❌ Player instantiation failed!")
 		else:
 			printerr("⚠️ No SpawnPoint found in the start room!")
 	else:
@@ -129,8 +132,8 @@ func open_braille_terminal():
 
 func spawn_enemies():
 	var room_keys = maze_generator_instance.rooms.keys()
-	var enemy_count = maze_generator_instance.get_meta("enemy_count") if maze_generator_instance.has_meta("enemy_count") else 0
-
+	var enemy_count = maze_generator_instance.get_meta("enemy_count") if maze_generator_instance.has_meta("enemy_count") else 1
+	print("Enemy_count: ",enemy_count)
 	for i in range(enemy_count):
 		var enemy = Enemy.instantiate()
 		var room_pos = room_keys[randi() % room_keys.size()]
@@ -186,35 +189,73 @@ func _on_braille_code_entered(is_correct: bool):
 		current_terminal_instance.queue_free()
 		current_terminal_instance = null
 
-		
-func advance_to_next_level():
-	current_level += 1
+func _cleanup_level():
+	# Remove todos os inimigos
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		enemy.queue_free()
 	
-	# Aumentar complexidade com base no nível
-	var new_max_rooms = clamp(3 + current_level * 2, 3, 20)
-	var new_enemy_count = clamp(current_level - 1, 0, 10)
-
-	# Remover o labirinto antigo
+	# Remove itens coletáveis que possam ter sobrado
+	for item in get_tree().get_nodes_in_group("items"):
+		item.queue_free()
+		
+	# Remove o labirinto antigo
 	if maze_generator_instance and is_instance_valid(maze_generator_instance):
 		maze_generator_instance.queue_free()
+		maze_generator_instance = null
+		
+	# Resgata o jogador para que ele não seja deletado com o labirinto
+	if player and is_instance_valid(player):
+		# Remove o jogador do seu pai atual (que será deletado) e o adiciona
+		# temporariamente como filho do nó Main.
+		if player.get_parent():
+			player.get_parent().remove_child(player)
+		add_child(player)
+		
+func advance_to_next_level():
+	# Verifica se o jogador venceu o jogo
+	if current_level >= MAX_LEVELS:
+		show_victory_screen()
+		return
 
-	# Criar novo labirinto com novo tamanho e número de inimigos
+	current_level += 1
+	print("🚀 Avançando para o nível ", current_level, " de ", MAX_LEVELS)
+
+	# Limpa todos os elementos do nível anterior
+	_cleanup_level()
+
+	# Limpa a UI de coletáveis para o novo nível
+	if collectibles_ui_instance:
+		collectibles_ui_instance.clear_items() # Você precisará criar esta função na UI
+
+	# Aumenta a complexidade com base no nível
+	var new_max_rooms = 5 + (current_level * 3) # Ex: Nível 1=8, Nível 2=11, Nível 3=14
+	var new_enemy_count = 1 + current_level # Ex: Nível 1=2, Nível 2=3, Nível 3=4
+
+	# Cria o novo labirinto
 	maze_generator_instance = maze_generator_scene.instantiate()
+	maze_generator_instance.max_rooms = new_max_rooms
+	maze_generator_instance.set_meta("enemy_count", new_enemy_count)
 	add_child(maze_generator_instance)
 
-	maze_generator_instance.max_rooms = new_max_rooms
-	maze_generator_instance.room_size = Vector2(640, 640) # Se quiser manter fixo
-
-	# Reconectar o sinal
+	# Reconecta o sinal para quando o novo labirinto for gerado
 	maze_generator_instance.connect("maze_generated", _on_maze_generator_maze_generated)
+	
+	# A geração do labirinto irá eventualmente chamar _on_maze_generator_maze_generated,
+	# que irá reposicionar o jogador.
 
-	# Salvar código correto (será sobrescrito ao gerar)
-	correct_braille_code = maze_generator_instance.getCurrentCode()
+# ADICIONAR: Função para a tela de vitória
+func show_victory_screen():
+	print("🏆 PARABÉNS! Você venceu o jogo!")
+	# Aqui você pode criar uma tela de vitória, similar à de Game Over
+	# Por exemplo:
+	get_tree().paused = true
+	var victory_label = Label.new()
+	victory_label.text = "VOCÊ VENCEU!"
+	# Estilize e posicione o label como desejar
+	victory_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	add_child(victory_label)
+	# O ideal é criar uma cena para a tela de vitória, assim como a de Game Over.
 
-	# Atualize o contador de inimigos a spawnar
-	maze_generator_instance.set_meta("enemy_count", new_enemy_count)
-
-	print("🚀 Avançando para o nível ", current_level)
 
 # NEW: Helper function to get braille code for a letter
 func get_braille_code_for_letter(letter: String) -> Array:

@@ -130,7 +130,7 @@ func take_damage():
 	animated_sprite.visible = true
 
 	if health <= 0:
-		show_game_over_dialog()
+		game_over()
 
 func start_blinking():
 	var blink_timer := 0.0
@@ -145,30 +145,65 @@ func start_blinking():
 	animated_sprite.visible = true
 
 
-func show_game_over_dialog():
-	if game_over_dialog: return # Avoid creating multiple dialogs
+func game_over():
+	if game_over_dialog: return # Evita criar múltiplos diálogos
+
+	# Congela o jogador para que ele não possa se mover
+	set_physics_process(false)
+
+	# Pausa o jogo inteiro.
+	get_tree().paused = true
 
 	game_over_dialog = GAME_OVER_DIALOG_SCENE.instantiate()
+	var canvas := get_tree().get_root().find_child("CanvasLayer", true, false)
+	if canvas:
+		canvas.add_child(game_over_dialog)
+	else:
+		print("⚠️ CanvasLayer not found — fallback to adding directly")
+		add_child(game_over_dialog)
+
+	if game_over_dialog is Control:
+		await get_tree().process_frame
+		var screen_size = get_viewport().get_visible_rect().size
+		game_over_dialog.position = (screen_size / 2.0) - (game_over_dialog.size / 2.0)
+	else:
+		var camera := get_viewport().get_camera_2d()
+		game_over_dialog.global_position = camera.global_position if camera else global_position
+
+	# --- CORREÇÃO PRINCIPAL ---
+	# Adicione a tela de Game Over à raiz da árvore de cenas, e não ao jogador.
+	# Isso garante que ela seja desenhada na camada da UI, por cima de tudo.
 	get_tree().get_root().add_child(game_over_dialog)
 
-	# Optional: Position it centered
-	if game_over_dialog.has_method("popup_centered"):
-		game_over_dialog.call("popup_centered")
+	# Agora que o nó é filho do root, este código de centralização funcionará perfeitamente.
+	# Verificamos se a cena é um nó de Controle (o que é o ideal para UIs).
+	if game_over_dialog is Control:
+		# Centraliza a tela. Usar 'size' aqui é mais direto.
+		game_over_dialog.position = (game_over_dialog.get_viewport_rect().size / 2) - (game_over_dialog.size / 2)
+	
+	# Conecta os botões da tela de Game Over (esta parte estava correta)
+	var restart_button = game_over_dialog.get_node_or_null("Panel/RestartButton")
+	var surrender_button = game_over_dialog.get_node_or_null("Panel/SurrenderButton")
+
+	if restart_button:
+		restart_button.pressed.connect(_on_restart_game)
 	else:
-		game_over_dialog.show()
+		printerr("Botão de Reiniciar não encontrado na cena de Game Over!")
 
-	# ✅ Fix the paths
-	var restart_button = game_over_dialog.get_node("Panel/RestartButton")
-	var surrender_button = game_over_dialog.get_node("Panel/SurrenderButton")
-
-	restart_button.connect("pressed", Callable(self, "_on_restart_game"))
-	surrender_button.connect("pressed", Callable(self, "_on_surrender"))
+	if surrender_button:
+		surrender_button.pressed.connect(_on_surrender)
+	else:
+		printerr("Botão de Desistir não encontrado na cena de Game Over!")
 
 
 func _on_restart_game():
+	# Reativa o processamento antes de recarregar a cena
+	get_tree().paused = false
 	get_tree().reload_current_scene()
 
 func _on_surrender():
+	# Reativa o processamento antes de fechar o jogo
+	get_tree().paused = false
 	get_tree().quit()
 
 func emit_sonar():

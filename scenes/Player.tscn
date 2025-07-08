@@ -309,6 +309,7 @@ shape = SubResource("CapsuleShape2D_mdl7e")
 
 [node name="VignetteLayer" type="CanvasLayer" parent="Player"]
 layer = 0
+visible = false
 
 [node name="ColorRect" type="ColorRect" parent="Player/VignetteLayer"]
 material = SubResource("ShaderMaterial_qu4a1")

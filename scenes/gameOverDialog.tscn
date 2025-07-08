@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://dwtkm6xwlx1sq"]
 
 [node name="Control" type="Control"]
+process_mode = 3
+light_mask = 16
+visibility_layer = 16
+z_index = -1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,10 +14,10 @@ grow_vertical = 2
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 0
-offset_left = 138.0
-offset_top = 81.0
-offset_right = 362.0
-offset_bottom = 297.0
+offset_left = 817.0
+offset_top = 432.0
+offset_right = 1041.0
+offset_bottom = 648.0
 
 [node name="messageLabel" type="Label" parent="Panel"]
 layout_mode = 0

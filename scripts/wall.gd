@@ -25,7 +25,7 @@ func reveal():
 	# Quick fade-in
 	tween.tween_property(sprite, "modulate:a", 1.0, 0.2)
 	# Stay visible for 2 seconds
-	#tween.tween_callback(func(): await get_tree().create_timer(2.0).timeout)
+	tween.tween_callback(func(): await get_tree().create_timer(2.0).timeout)
 	# Smooth fade-out
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.5)
 	tween.tween_callback(func(): 

@@ -28,17 +28,8 @@ func setup_contents():
 			print("johson")
 			#var player = PLAYER_SCENE.instantiate()
 			#$SpawnPoint.add_child(player)
-		"enemy":
-			spawn_enemies()
 		"end":
 			spawn_exit_portal()
-
-func spawn_enemies():
-	if not $EnemySpawnPoints:
-		return
-	var spawner = $EnemySpawnPoints.get_child(randi() % $EnemySpawnPoints.get_child_count())
-	var enemy = ENEMY_SCENE.instantiate()
-	spawner.add_child(enemy)
 
 func spawn_exit_portal():
 	var portal = EXIT_SCENE.instantiate()

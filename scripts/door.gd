@@ -41,7 +41,7 @@ func reveal():
 	# Quick fade-in
 	tween.tween_property(sprite, "modulate:a", 1.0, 0.2)
 	# Stay visible for 2 seconds
-	#tween.tween_callback(func(): await get_tree().create_timer(2.0).timeout)
+	tween.tween_callback(func(): await get_tree().create_timer(2.0).timeout)
 	# Smooth fade-out
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.5)
 	tween.tween_callback(func(): 
@@ -128,7 +128,7 @@ func _on_terminal_validated():
 	
 	if player:
 		player.set_process(true)  # Desbloqueia o jogador
-
+	door_opened_correctly.emit()
 	emit_signal("door_opened_correctly")  # 🔔 Emitimos aqui!
 
 func show_interact_message():

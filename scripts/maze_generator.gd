@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var max_rooms := 3
+@export var max_rooms := 5
 @export var room_size := Vector2(640, 640)
 @export var start_room_scene: PackedScene = preload("res://scenes/room.tscn")
 @export var enemy_room_scene: PackedScene = preload("res://scenes/room.tscn")
@@ -15,7 +15,7 @@ var current_item_letter: String = "" # New: Store the letter of the item for the
 # List of possible braille letters for items
 const BRAILLE_LETTERS = ["a", "b", "c", "d", "e"] # Extend as needed
 
-
+var enemy_count = 2
 
 var rooms = {}  # Dictionary with key: Vector2i (grid position), value: room data
 var start_room_pos = Vector2i(0, 0)
@@ -220,3 +220,23 @@ func find_and_mark_end_room():
 		add_child(door)
 	else:
 		print("⚠️ Could not add door: exits.size() =", exits.size(), ", door_scene =", door_scene)
+
+func get_reachable_rooms_excluding_blocked(blocked_a: Vector2i, blocked_b: Vector2i) -> Array[Vector2i]:
+	var visited := {}
+	var queue := [start_room_pos]
+	visited[start_room_pos] = true
+
+	while not queue.is_empty():
+		var current = queue.pop_front()
+		for dir in rooms[current]["exits"]:
+			var neighbor = current + dir
+
+			# Skip blocked connection (the door)
+			if (current == blocked_a and neighbor == blocked_b) or (current == blocked_b and neighbor == blocked_a):
+				continue
+
+			if not visited.has(neighbor) and rooms.has(neighbor):
+				visited[neighbor] = true
+				queue.append(neighbor)
+
+	return visited.keys()
