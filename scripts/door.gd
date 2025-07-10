@@ -72,7 +72,6 @@ func is_player_facing() -> bool:
 		return false
 	return global_position.distance_to(player.global_position) <= interaction_distance
 
-
 func open_terminal():
 	if terminal_open:
 		print("⛔ Terminal is already open.")
@@ -123,13 +122,16 @@ func _on_terminal_closed():
 func _on_terminal_validated():
 	print("✅ Código correto, abrindo porta...")
 	collision_shape.disabled = true
-	collision_shape_interact.disabled = true
+	# collision_shape_interact não existe no seu código, então comentei ou remova
+	# collision_shape_interact.disabled = true 
 	sprite.play("open")
 	
 	if player:
-		player.set_process(true)  # Desbloqueia o jogador
-	door_opened_correctly.emit()
-	emit_signal("door_opened_correctly")  # 🔔 Emitimos aqui!
+		player.set_process(true)
+	
+	# Você está emitindo o sinal duas vezes. Deixe apenas uma chamada.
+	# door_opened_correctly.emit() # Esta linha usa a variável do sinal
+	emit_signal("door_opened_correctly")  # 🔔 Esta linha usa o nome do sinal. Ambas funcionam, mas uma é suficiente.
 
 func show_interact_message():
 	print("Press SPACE to interact")  # Replace with UI label if needed

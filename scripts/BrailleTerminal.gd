@@ -39,14 +39,15 @@ func _on_close_pressed():
 
 func _on_enter_pressed():
 	var current_code := []
-	print("Current array")
-	print(current_code)
 	for dot in dots:
 		current_code.append(dot.button_pressed)
-	print(current_code)
+	
 	if current_code == CORRECT_CODE:
-		code_validated.emit()
+		print("✅ Código correto inserido no terminal!")
+		code_validated.emit() # Emite o sinal de sucesso
 		queue_free()
+	else:
+		print("❌ Código incorreto.")
 
 # New: Method to set the correct braille code from outside
 func set_correct_code(code_array: Array):

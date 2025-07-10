@@ -25,12 +25,13 @@ signal maze_generated
 
 func _ready():
 	randomize()
-	generate_dungeon()
+	#generate_dungeon()
 	
 func getCurrentCode():
 	return current_item_letter
 
 func generate_dungeon():
+	randomize()
 	for child in get_children():
 		child.queue_free()
 	rooms.clear()

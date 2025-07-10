@@ -63,12 +63,19 @@ func reveal():
 	player.stream = reveal_sound
 	player.global_position = global_position
 
-	# Pick a random start time in the clip
 	var max_offset = reveal_sound.get_length() - 1.0  # Avoid the very end
 	player.seek(randf_range(0.0, max_offset))
-	
+
 	get_tree().current_scene.add_child(player)
 	player.play()
+
+	# Automatically stop audio after the reveal duration
+	var audio_timer = Timer.new()
+	audio_timer.wait_time = 2  # Total time of the tween sequence
+	audio_timer.one_shot = true
+	audio_timer.connect("timeout", Callable(player, "stop"))
+	player.add_child(audio_timer)
+	audio_timer.start()
 
 	# Fade in sprite
 	var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SINE)
@@ -80,5 +87,5 @@ func reveal():
 	tween.tween_callback(func():
 		is_visible = false
 		can_be_revealed = true
-		player.queue_free()  # Clean up audio player
+		player.queue_free()
 	)
