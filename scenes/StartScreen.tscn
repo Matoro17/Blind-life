@@ -1,7 +1,38 @@
-[gd_scene load_steps=3 format=3 uid="uid://dglet4myh5r8v"]
+[gd_scene load_steps=10 format=3 uid="uid://dglet4myh5r8v"]
 
 [ext_resource type="Script" uid="uid://divl88f2wq2se" path="res://scripts/StartScreen.gd" id="1_pswtb"]
 [ext_resource type="Texture2D" uid="uid://dpdxdmhl6xq4b" path="res://icon.svg" id="2_a0vbq"]
+[ext_resource type="Texture2D" uid="uid://jqxtpmsphnb2" path="res://art/single-space-sprite.png" id="3_a0vbq"]
+[ext_resource type="Texture2D" uid="uid://btd7nwjkc4n12" path="res://art/transition.png" id="3_nj7f0"]
+[ext_resource type="FontFile" uid="uid://d361kobaapxej" path="res://board-game/Pixellari.ttf" id="4_2dvb4"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_gn4gw"]
+font = ExtResource("4_2dvb4")
+font_size = 27
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2dvb4"]
+atlas = ExtResource("3_a0vbq")
+region = Rect2(0, 0, 132, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nj7f0"]
+atlas = ExtResource("3_a0vbq")
+region = Rect2(132, 0, 132, 63)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gn4gw"]
+resource_local_to_scene = true
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2dvb4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nj7f0")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.0
+}]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_pswtb")
@@ -13,9 +44,53 @@ position = Vector2(965.498, 603.502)
 scale = Vector2(69.4609, 35.6016)
 texture = ExtResource("2_a0vbq")
 
-[node name="Label" type="Label" parent="."]
-offset_left = 869.998
-offset_top = 506.002
-offset_right = 1054.0
-offset_bottom = 529.002
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(970, 535)
+scale = Vector2(1.92778, 1.94861)
+texture = ExtResource("3_nj7f0")
+
+[node name="TextBox" type="ColorRect" parent="."]
+modulate = Color(1, 1, 1, 0.701961)
+offset_left = 543.0
+offset_top = 633.0
+offset_right = 583.0
+offset_bottom = 673.0
+scale = Vector2(20.7128, 9.77845)
+
+[node name="Label" type="Label" parent="TextBox"]
+layout_mode = 0
+offset_left = 0.724187
+offset_top = 2.04532
+offset_right = 450.724
+offset_bottom = 252.045
+scale = Vector2(0.0830378, 0.137252)
+text = "abcdeabcdeabcdeabcdea"
+label_settings = SubResource("LabelSettings_gn4gw")
+autowrap_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 1223.0
+offset_top = 591.0
+offset_right = 1407.0
+offset_bottom = 631.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+visible = false
+layout_mode = 2
 text = "Press 'Space Bar' to talk"
+
+[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="HBoxContainer"]
+position = Vector2(90, 16)
+scale = Vector2(0.699863, 0.699863)
+sprite_frames = SubResource("SpriteFrames_gn4gw")
+animation = &"idle"
+frame_progress = 0.269617

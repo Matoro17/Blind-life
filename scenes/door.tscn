@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://noyy4o6r8xl3" path="res://art/door.png" id="3_18pbm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q5w8r"]
-size = Vector2(125, 222)
+size = Vector2(187.546, 287.233)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t58dd"]
 atlas = ExtResource("3_18pbm")
@@ -46,7 +46,7 @@ script = ExtResource("1_83dcw")
 terminal_scene = ExtResource("2_la1wf")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door"]
-position = Vector2(-1.5, -1.99998)
+position = Vector2(9.29283, 5.06882)
 shape = SubResource("RectangleShape2D_q5w8r")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Door"]
@@ -56,6 +56,8 @@ sprite_frames = SubResource("SpriteFrames_kgbum")
 
 [node name="ProximityArea" type="Area2D" parent="Door"]
 position = Vector2(1, 1.00002)
+collision_layer = 9
+collision_mask = 9
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door/ProximityArea"]
 position = Vector2(-1, -1.00002)

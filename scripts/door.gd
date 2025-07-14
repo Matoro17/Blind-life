@@ -9,6 +9,8 @@ extends Node2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 var door_correct_braille_code: Array = [] # New: Store the correct braille code for this door
 
+var reveal_sound = preload("res://audio/double-door-lock-101210.mp3")
+
 var player_in_range := false
 var player
 var is_visible: bool = false
@@ -31,17 +33,24 @@ func _ready():
 	$CollisionShape2D.shape = rect
 	
 func reveal():
+	print("Revela a door")
 	if not can_be_revealed:
 		return
 	
 	can_be_revealed = false
 	is_visible = true
 	
+	var player = AudioStreamPlayer2D.new()
+	player.stream = reveal_sound
+	player.global_position = global_position
+	get_tree().current_scene.add_child(player)
+	player.play()
+	
 	var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SINE)
 	# Quick fade-in
 	tween.tween_property(sprite, "modulate:a", 1.0, 0.2)
 	# Stay visible for 2 seconds
-	tween.tween_callback(func(): await get_tree().create_timer(2.0).timeout)
+	#tween.tween_callback(func(): await get_tree().create_timer(2.0).timeout)
 	# Smooth fade-out
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.5)
 	tween.tween_callback(func(): 

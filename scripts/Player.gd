@@ -269,5 +269,7 @@ func _on_item_collection_area_area_entered(area: Area2D):
 			player.global_position = global_position
 			get_tree().current_scene.add_child(player)
 			player.play()
+			area.reveal()
+			await get_tree().create_timer(2.0)
 			increase_visibility(0.05) # Increase vignette
 			area.queue_free() # Remove the item from the scene

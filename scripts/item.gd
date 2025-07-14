@@ -45,6 +45,8 @@ func _on_body_entered(body):
 		if body.has_signal("item_collected"):
 			body.emit_signal("item_collected", letter, sprite_node.texture)
 			body.increase_visibility(0.05)
+			reveal()
+			await get_tree().create_timer(2.0)
 			queue_free()
 			
 func _on_area_entered(area: Area2D):
